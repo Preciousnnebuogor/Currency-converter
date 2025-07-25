@@ -5,6 +5,7 @@ export default function Check() {
   const [getcurrency, setGetCurrency] = useState([]);
   const [getForm, setGetForm] = useState("");
   const [getTo, setGetTo] = useState("");
+  const[result, setResult] = useState('')
 
   async function dataFetch() {
     try {
@@ -14,9 +15,19 @@ export default function Check() {
       const data = await response.json();
       const currencyOptions = Object.keys(data.rates);
       setGetCurrency(currencyOptions);
+
+      if (getValue && getForm && getTo) {
+        const formRate = data.rates[getForm];
+        const toRate = data.rates[getTo];
+        const calRate = (getValue / formRate) * toRate;
+        setResult(calRate.toFixed(2));
+      }
+
     } catch (error) {
       console.log("error not found");
     }
+
+    
   }
   useEffect(() => {
     dataFetch(); // runs once when component mounts
@@ -79,7 +90,11 @@ export default function Check() {
           Connect
         </button>
       </div>
-      <p></p>
+      {result && (
+        <div className="text-center text-lg font-semibold text-green-700 mt-4">
+          {getValue} {getForm} = {result} {getTo}
+        </div>
+      )}
     </div>
   );
 }
